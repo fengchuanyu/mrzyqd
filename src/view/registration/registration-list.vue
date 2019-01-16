@@ -11,14 +11,9 @@
   </div>
 </template>
 <script>
-export default {
-
-}
-</script>
-
-<script>
+import axios from 'axios'
 import qqFans from '@/assets/images/qq-fance.jpg'
-import { getData } from '@/api/data'
+// import { getData } from '@/api/data'
 export default {
   name: 'list_page',
   data () {
@@ -185,14 +180,24 @@ export default {
     } 
   },
   methods: {
-    // shishi(){
-    //   getTableData().then(res => {
-    //     console.log(res.data.data);
-    //     this.tableData = res.data.data;
-    //   }).catch(err => {
-    //     console.log(err)
-    //   })
-    // }
+    send () {
+      axios({
+        method: 'get',
+        url: 'http://localhost/zyy/user/allreg'
+      }).then((res) => {
+        this.data6 = res.data.data
+        console.log(this.data6)
+      })
+    },
+    send2 () {
+      axios({
+        method: 'get',
+        url: 'http://localhost/zyy/user/allreg2'
+      }).then((res) => {
+        this.data7 = res.data.data
+        console.log(this.data7)
+      })
+    },
     show (index) {
       this.$Modal.info({
         title: '挂号详情',
@@ -231,19 +236,8 @@ export default {
     }
   },
   created() {
-    getData().then(res => {
-        this.Data = res.data;
-        console.log(res);
-        this.Data.forEach(val => {
-          if(val.r_tag == "未过期"){
-            this.data6.push(val);
-          }else{
-            this.data7.push(val);
-          }
-        });
-      }).catch(err => {
-        console.log(err)
-      })
+    this.send()
+    this.send2()
   }
 }
 </script>

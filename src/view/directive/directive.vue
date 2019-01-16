@@ -13,10 +13,18 @@
             <i-input v-model="formItem.article_title" placeholder="请输入"  name="title"></i-input>
           </Form-item>
           <Form-item label="文章作者">
-            <i-input v-model="formItem.article_did" name="did" :autosize="{minRows: 2,maxRows: 8}" placeholder="请输入..."></i-input>
+            <div class="iview-item1">
+              <Select v-model="formItem.article_id">
+                <Option v-for="item in doc" :value="item.did" :key="item.did">{{ item.doctor_name }}</Option>
+              </Select>
+            </div>
           </Form-item>
           <Form-item label="文章类型">
-            <i-input v-model="formItem.article_class" name="class" :autosize="{minRows: 2,maxRows: 8}" placeholder="请输入..."></i-input>
+            <div class="iview-item2">
+              <Select v-model="formItem.article_class">
+                <Option v-for="item in ill" :value="item.iid" :key="item.iid">{{ item.ill_title }}</Option>
+              </Select>
+            </div>
           </Form-item>
           <!-- <Form-item label="文章详情">
             <i-input v-model="formItem.article_content" type="textarea" name="content" :autosize="{minRows: 2,maxRows: 8}" placeholder="请输入..."></i-input>
@@ -44,6 +52,8 @@ export default {
       formItem: {
 
       },
+      doc:[],
+      ill:[],
       modal1:false,
       columns7: [
         {
@@ -68,7 +78,7 @@ export default {
         },
         {
           title: '文章作者',
-          key: 'article_did',
+          key: 'article_id',
           width:100,
         },
         {
@@ -121,6 +131,8 @@ export default {
   },
   created() {
     this.send();
+    this.send1();
+    this.send2();
   },
   methods: {
     goDetail(idx) {
@@ -177,7 +189,6 @@ export default {
         console.log(err)
       })
     },
-
     send() {
       axios({
         method: "get",
@@ -187,6 +198,24 @@ export default {
         this.data6 = res.data;
         console.log(this.formInline);
       });
+    },
+    send1 () {
+      axios({
+        method: 'get',
+        url: 'http://localhost/zyy/doctor/getdoc'
+      }).then((res) => {
+        this.doc = res.data
+        console.log(this.doc)
+      })
+    },
+    send2 () {
+      axios({
+        method: 'get',
+        url: 'http://localhost/zyy/User/allills'
+      }).then((res) => {
+        this.ill = res.data.data;
+        console.log(this.ill)
+      })
     }
   }
 };
@@ -212,5 +241,13 @@ export default {
   position: absolute;
   left: 5px;
   top: 10px;
+}
+.iview-item1{
+  position: relative;
+  z-index: 100001;
+}
+.iview-item2{
+  position: relative;
+  z-index: 100000;
 }
 </style>

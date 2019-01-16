@@ -80,7 +80,8 @@ export default [
     path: '/tools_methods',
     name: 'tools_methods',
     meta: {
-      hide: true
+      icon: 'logo-buffer',
+      title: '病例管理'
     },
     component: Main,
     children: [{

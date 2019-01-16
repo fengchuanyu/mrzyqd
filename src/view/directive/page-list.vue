@@ -7,14 +7,18 @@
           </Input>
       </FormItem>
       <FormItem prop="name" class="formitem1">
-          <Input type="text" v-model="formInline.name" placeholder="作者名" name="goal">
-              <Icon type="ios-calculator-outline" slot="prepend"></Icon>
-          </Input>
+        <div class="iview-item">
+          <Select v-model="formInline.name" placeholder="作者名字">
+              <Option v-for="item in doc" :value="item.did" :key="item.did">{{ item.doctor_name }}</Option>
+          </Select>
+        </div>
       </FormItem>
       <FormItem prop="type" class="formitem1">
-          <Input type="text" v-model="formInline.type" placeholder="文章类型" name="time">
-              <Icon type="ios-lock-outline" slot="prepend"></Icon>
-          </Input>
+        <div class="iview-item">
+          <Select v-model="formInline.type" placeholder="文章类型">
+              <Option v-for="item in ill" :value="item.iid" :key="item.iid">{{ item.ill_title }}</Option>
+          </Select>
+        </div>
       </FormItem>
       <FormItem>
           <Button type="primary" @click="submit()">点击保存</Button>
@@ -53,8 +57,15 @@ export default {
         desc: [
           { required: true, message: '请填写文章内容', trigger: 'blur' }
         ]
-      }
+      },
+      doc: [
+      ],
+      ill:[]
     }
+  },
+  created () {
+    this.send()
+    this.send2()
   },
   methods: {
     submit () {
@@ -75,6 +86,24 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    send () {
+      axios({
+        method: 'get',
+        url: 'http://localhost/zyy/doctor/getdoc'
+      }).then((res) => {
+        this.doc = res.data
+        console.log(this.doc)
+      })
+    },
+    send2 () {
+      axios({
+        method: 'get',
+        url: 'http://localhost/zyy/User/allills'
+      }).then((res) => {
+        this.ill = res.data.data;
+        console.log(this.ill)
+      })
     }
   }
 }
@@ -82,5 +111,12 @@ export default {
 <style>
     .formitem1{
         width: 300px;
+    }
+    select{
+        width: 300px;
+    }
+    .iview-item{
+      position: relative;
+      z-index: 1000000;
     }
 </style>
