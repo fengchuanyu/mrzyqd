@@ -5,22 +5,27 @@
         </Upload>
          <Form ref="formInline" :model="formInline" :rules="ruleInline" method="post" inline>
             <FormItem prop="name" class="formitem">
-                <Input type="text" v-model="formInline.name" placeholder="姓名" name="name">
+                <Input type="text" v-model="formInline.name" placeholder="医生姓名" name="name">
                     <Icon type="ios-person-outline" slot="prepend"></Icon>
                 </Input>
             </FormItem>
-            <FormItem prop="goal" class="formitem">
-                <Input type="text" v-model="formInline.goal" placeholder="医生职称" name="goal">
-                    <Icon type="ios-calculator-outline" slot="prepend"></Icon>
-                </Input>
+            <FormItem prop="office" class="formitem">
+                <Select v-model="formInline.office" class="correctinput">
+                    <Option v-for="item in formInline2" :value="item.oid" :key="item.oid">{{ item.o_name }}</Option>
+                </Select>
             </FormItem>
-            <FormItem prop="workyear" class="formitem">
-                <Input type="number" v-model="formInline.workyear" placeholder="从医年限" name="time">
+            <FormItem prop="place" class="formitem">
+                <Input type="text" v-model="formInline.place" placeholder="医生工作地点" name="place">
                     <Icon type="ios-lock-outline" slot="prepend"></Icon>
                 </Input>
             </FormItem>
-            <FormItem prop="goodat" class="formitem">
-                <Input type="text" v-model="formInline.goodat" placeholder="擅长病种" name="special">
+            <FormItem prop="job" class="formitem">
+                <Input type="text" v-model="formInline.job" placeholder="医生职称" name="job">
+                    <Icon type="ios-bookmark-outline" slot="prepend"></Icon>
+                </Input>
+            </FormItem>
+            <FormItem prop="price" class="formitem">
+                <Input type="text" v-model="formInline.price" placeholder="挂号金额" name="price">
                     <Icon type="ios-bookmark-outline" slot="prepend"></Icon>
                 </Input>
             </FormItem>
@@ -41,30 +46,37 @@ export default {
     return {
       formInline: {
         name: '',
-        workyear: '',
-        goodat: '',
+        office: '',
+        place: '',
         desc: '',
-        goal: '',
+        job: '',
+        price:'',
         img: ''
       },
+      formInline2:[
+          
+      ],
       ruleInline: {
         name: [
-          { required: true, message: '请填写姓名', trigger: 'blur' }
+          { required: true, message: '请填写医生姓名', trigger: 'blur' }
         ],
-        workyear: [
-          { required: true, message: '请填写从医年限', trigger: 'blur' }
+        place: [
+          { required: true, message: '请填写医生工作地点', trigger: 'blur' }
         ],
-        goodat: [
-          { required: true, message: '请填写擅长病种', trigger: 'blur' }
+        job: [
+          { required: true, message: '请填写医生职称', trigger: 'blur' }
         ],
         desc: [
           { required: true, message: '请填写医生简介', trigger: 'blur' }
         ],
-        goal: [
-          { required: true, message: '请填写医生职称', trigger: 'blur' }
+        price: [
+          { required: true, message: '请填写挂号价格', trigger: 'blur' }
         ]
       }
     }
+  },
+  created () {
+      this.send2()
   },
   methods: {
     handleSubmit (name) {
@@ -93,6 +105,15 @@ export default {
         console.log(res)
       }).catch(err => {
         console.log(err)
+      })
+    },
+    send2 () {
+      axios({
+        method: 'get',
+        url: 'http://localhost/zyy/doctor/getoffice'
+      }).then((res) => {
+        this.formInline2 = res.data.data
+        console.log(this.formInline2)
       })
     }
   }
