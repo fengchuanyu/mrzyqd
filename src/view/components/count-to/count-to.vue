@@ -5,9 +5,10 @@
           <div style="text-align:center" >
               <img class="doctor-img" :src="doctor" alt="">
               <p>医生姓名:{{value.doctor_name}}</p>
-              <p>医生职称:{{value.doctor_place}}</p>
-              <p>从医年限:{{value.doctor_job}}年</p>
-              <p>擅长病种:{{value.doctor_special}}</p>
+              <p>医生所在科室:{{value.o_name}}</p>
+              <p>医生工作地点:{{value.doctor_place}}</p>
+              <p>医生职称:{{value.doctor_job}}</p>
+              <p>挂号金额:{{value.doctor_price}}</p>
               <p>医生简介:{{value.doctor_message}}</p>
               <Button type="primary" @click="correct(index)">点击进行修改</Button>
           </div>
@@ -38,13 +39,16 @@
                 <Icon type="ios-contact-outline" slot="prefix" />
               </Input>
             </FormItem>
-            <Input v-model="correctdoc.doctor_place" placeholder="医生职称" class="correctinput" name="goal">
+            <Select v-model="correctdoc.doctor_office" class="correctinput">
+              <Option v-for="item in formInline2" :value="item.oid" :key="item.oid">{{ item.o_name }}</Option>
+            </Select>
+            <Input v-model="correctdoc.doctor_place" placeholder="医生工作地点" class="correctinput" name="goal">
               <Icon type="ios-briefcase-outline" slot="prefix" />
             </Input>
-            <Input v-model="correctdoc.doctor_job" placeholder="从医年限" class="correctinput" name="time">
+            <Input v-model="correctdoc.doctor_job" placeholder="医生职称" class="correctinput" name="time">
               <Icon type="ios-bookmark-outline" slot="prefix" />
             </Input>
-            <Input v-model="correctdoc.doctor_special" placeholder="擅长病种" class="correctinput" name="special">
+            <Input v-model="correctdoc.doctor_price" placeholder="挂号金额" class="correctinput" name="special">
               <Icon type="ios-medkit-outline" slot="prefix" />
             </Input>
             <Input v-model="correctdoc.doctor_message" placeholder="医生简介" class="correctinput" name="desc">
@@ -67,13 +71,16 @@ export default {
       modal1: false,
       formInline: [
       ],
+      formInline2:[
+      ],
       correctdoc: {
 
       }
     }
   },
   created () {
-    this.send()
+    this.send();
+    this.send2()
   },
   methods: {
     Add: function () {
@@ -124,6 +131,7 @@ export default {
     correct (index) {
       this.modal1 = true
       this.correctdoc = this.formInline[index]
+      console.log(this.correctdoc)
     },
     send () {
       axios({
@@ -133,18 +141,35 @@ export default {
         this.formInline = res.data
         console.log(this.formInline)
       })
+    },
+    send2 () {
+      axios({
+        method: 'get',
+        url: 'http://localhost/zyy/doctor/getoffice'
+      }).then((res) => {
+        this.formInline2 = res.data.data
+        console.log(this.formInline2)
+      })
     }
   }
 }
 </script>
 
 <style>
+p{
+   overflow: hidden;
+    -webkit-line-clamp: 2;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+
+}
 .doctor-img{
     height: 200px;
     width: 150px;
 }
 .card-doctor .ivu-card-body{
-  height: 400px;
+  height: 430px;
 }
 .card-doctor .md-add{
   margin-top:100px ;
@@ -174,4 +199,5 @@ export default {
   margin-bottom: 10px;
   width: 280px;
 }
+
 </style>
