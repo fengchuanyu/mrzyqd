@@ -1,8 +1,7 @@
 <template>
     <div class="form">
-        <Upload v-model="formInline.img">
-            <Button icon="ios-cloud-upload-outline">点击上传照片</Button>
-        </Upload>
+        <input @change="uploadPhoto($event)" type="file" class="kyc-passin">
+        <img :src="formInline.img" alt="">
          <Form ref="formInline" :model="formInline" :rules="ruleInline" method="post" inline>
             <FormItem prop="name" class="formitem">
                 <Input type="text" v-model="formInline.name" placeholder="医生姓名" name="name">
@@ -115,11 +114,38 @@ export default {
         this.formInline2 = res.data.data
         console.log(this.formInline2)
       })
+    },
+    uploadPhoto (e) {
+        // 利用fileReader对象获取file
+        var file = e.target.files[0];
+        var filesize = file.size;
+        var filename = file.name;
+        // 2,621,440   2M
+        if (filesize > 2101440) {
+            // 图片大于2MB
+    
+        }
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (e) => {
+    
+            // 读取到的图片base64 数据编码 将此编码字符串传给后台即可
+            var imgcode = e.target.result;
+            this.formInline.img=imgcode
+            console.log(this.formInline.img);
+        }
     }
   }
 }
 </script>
 <style>
+    img{
+        position: absolute;
+        width: 200px;
+        height: 300px;
+        left: -300px;
+        top: 50px;
+    }
     .form{
         /* background: red; */
         position: relative;
@@ -151,13 +177,17 @@ export default {
     }
 
     .form button:nth-child(1){
-        position: absolute;
-        top: 400px;
+        position: relative;
+        top: 500px;
     }
     .form button:nth-child(2){
         position: absolute;
         left: -350px;
         top: 0px;
         /* width: 100px; */
+    }
+    .kyc-passin{
+        position: absolute;
+        left: -300px;
     }
 </style>

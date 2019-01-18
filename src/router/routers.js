@@ -73,16 +73,6 @@ export default [
         },
         component: () =>
           import('@/view/components/drag-list/drag-list.vue')
-      },
-      {
-        path: 'office_page',
-        name: 'office_page',
-        meta: {
-          icon: 'md-person-add',
-          title: '科室管理'
-        },
-        component: () =>
-          import('@/view/components/office.vue')
       }
     ]
   },
@@ -95,15 +85,6 @@ export default [
     },
     component: Main,
     children: [{
-      path: 'tools_methods_page',
-      name: 'tools_methods_page',
-      meta: {
-        icon: 'ios-hammer',
-        title: '用户列表'
-      },
-      component: () =>
-        import('@/view/tools-methods/tools-methods.vue')
-    },{
       path: '/bingli',
       name: 'bingli',
       meta: {
@@ -137,7 +118,7 @@ export default [
     name: 'directive',
     meta: {
       icon: 'ios-apps',
-      title: '就医指南',
+      title: '文章管理',
       hide: true
     },
     component: Main,
@@ -170,7 +151,7 @@ export default [
     name: 'illclass',
     meta: {
       icon: 'md-cloud-upload',
-      title: '病种分类'
+      title: '特色诊疗'
     },
     component: Main,
     children: [
@@ -179,7 +160,7 @@ export default [
         name: 'illclass_details_page',
         meta: {
           icon: 'ios-document',
-          title: '病种分类'
+          title: '诊疗分类'
         },
         component: () => import('@/view/illclass/illclass-details.vue')
       },
@@ -188,10 +169,20 @@ export default [
         name: 'illclass_add_page',
         meta: {
           icon: 'md-clipboard',
-          title: '添加病种'
+          title: '添加诊疗'
         },
         component: () => import('@/view/illclass/illclass-add.vue')
       },
+      {
+        path: 'office_page',
+        name: 'office_page',
+        meta: {
+          icon: 'md-browsers',
+          title: '科室管理'
+        },
+        component: () =>
+          import('@/view/components/office.vue')
+      }
     ]
   },
   {
@@ -210,6 +201,26 @@ export default [
           title: '挂号列表'
         },
         component: () => import('@/view/registration/registration-list.vue')
+      }
+    ]
+  },
+  {
+    path: '/user',
+    name: 'user',
+    meta:{
+      hide:true
+    },
+    component: Main,
+    children: [
+      {
+        path: 'users_page',
+        name: 'users_page',
+        meta: {
+          icon: 'ios-hammer',
+          title: '用户列表'
+        },
+        component: () =>
+          import('@/view/tools-methods/tools-methods.vue')
       }
     ]
   },
