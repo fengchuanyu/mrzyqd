@@ -73,6 +73,16 @@ export default [
         },
         component: () =>
           import('@/view/components/drag-list/drag-list.vue')
+      },
+      {
+        path: 'office_page',
+        name: 'office_page',
+        meta: {
+          icon: 'md-person-add',
+          title: '科室管理'
+        },
+        component: () =>
+          import('@/view/components/office.vue')
       }
     ]
   },
