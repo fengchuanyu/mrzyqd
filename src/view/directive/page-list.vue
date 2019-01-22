@@ -16,7 +16,7 @@
       <FormItem prop="type" class="formitem1">
         <div class="iview-item">
           <Select v-model="formInline.type" placeholder="文章类型">
-              <Option v-for="item in ill" :value="item.iid" :key="item.iid">{{ item.ill_title }}</Option>
+              <Option v-for="item in ill" :value="item.cate_id" :key="item.cate_id">{{ item.cate_name }}</Option>
           </Select>
         </div>
       </FormItem>
@@ -99,9 +99,9 @@ export default {
     send2 () {
       axios({
         method: 'get',
-        url: 'http://localhost/zyy/User/allills'
+        url: 'http://localhost/zyy/User/allcate'
       }).then((res) => {
-        this.ill = res.data.data;
+        this.ill = res.data;
         console.log(this.ill)
       })
     }

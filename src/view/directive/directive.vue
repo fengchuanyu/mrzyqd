@@ -22,7 +22,7 @@
           <Form-item label="文章类型">
             <div class="iview-item2">
               <Select v-model="formItem.article_class">
-                <Option v-for="item in ill" :value="item.iid" :key="item.iid">{{ item.ill_title }}</Option>
+                <Option v-for="item in ill" :value="item.cate_id" :key="item.cate_id">{{ item.cate_name }}</Option>
               </Select>
             </div>
           </Form-item>
@@ -73,12 +73,12 @@ export default {
         },
         {
           title: '文章类型',
-          key: 'article_class',
+          key: 'cate_name',
           width:100,
         },
         {
           title: '文章作者',
-          key: 'article_id',
+          key: 'doctor_name',
           width:100,
         },
         {
@@ -196,7 +196,7 @@ export default {
       }).then(res => {
         this.formInline = res.data;
         this.data6 = res.data;
-        console.log(this.formInline);
+        // console.log(this.formInline);
       });
     },
     send1 () {
@@ -205,15 +205,15 @@ export default {
         url: 'http://localhost/zyy/doctor/getdoc'
       }).then((res) => {
         this.doc = res.data
-        console.log(this.doc)
+        // console.log(this.doc)
       })
     },
     send2 () {
       axios({
         method: 'get',
-        url: 'http://localhost/zyy/User/allills'
+        url: 'http://localhost/zyy/User/allcate'
       }).then((res) => {
-        this.ill = res.data.data;
+        this.ill = res.data;
         console.log(this.ill)
       })
     }

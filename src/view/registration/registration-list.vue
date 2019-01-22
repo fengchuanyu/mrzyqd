@@ -21,6 +21,12 @@ export default {
       Data:{
 
       },
+      reg:{
+
+      },
+      rreg:[
+
+      ],
       columns7: [
         {
           title: '用户名',
@@ -69,7 +75,7 @@ export default {
         },
         {
           title: '挂号日期',
-          key: 'r_time'
+          key: 'r_date'
         },
         {
           title: 'Action',
@@ -144,7 +150,7 @@ export default {
         },
         {
           title: '挂号日期',
-          key: 'r_time'
+          key: 'r_date'
         },
         {
           title: 'Action',
@@ -186,7 +192,7 @@ export default {
         url: 'http://localhost/zyy/user/allreg'
       }).then((res) => {
         this.data6 = res.data.data
-        console.log(this.data6)
+        // console.log(this.data6)
       })
     },
     send2 () {
@@ -195,7 +201,7 @@ export default {
         url: 'http://localhost/zyy/user/allreg2'
       }).then((res) => {
         this.data7 = res.data.data
-        console.log(this.data7)
+        // console.log(this.data7)
       })
     },
     show (index) {
@@ -233,11 +239,61 @@ export default {
         title: '医生详情',
         content: `医生姓名：${this.data7[index].doctor_name}<br>医生职位：${this.data7[index].doctor_job}<br>医生工作地点：${this.data7[index].doctor_place}<br>医生擅长：${this.data7[index].doctor_special}`
       })
-    }
+    },
+    send3 () {
+      axios({
+        method: 'get',
+        url: 'http://localhost/zyy/user/changereg'
+      }).then((res) => {
+        this.reg = res.data
+        this.rreg=this.reg;
+        for(var i=0;i<this.rreg.length;i++){
+          // var time= new Date().getTime()
+          var d = new Date();  
+          var time=d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); 
+          var rtime=this.rreg[i].r_date
+          if(time>rtime){
+            this.rreg[i].r_tag=1
+            // console.log(1)
+          }
+          if(rtime>time){
+            this.rreg[i].r_tag=2
+            // console.log(0)
+          }
+          if(rtime==null){
+            this.rreg[i].r_tag=null;
+          }
+          // console.log(this.rreg[i].r_tag)
+        }
+        console.log(this.rreg)
+        this.info()
+      })
+    },
+    info () {
+      for(var i=0;i<this.rreg.length;i++){
+        axios({
+        url: 'http://localhost/zyy/user/rereg',
+        method: 'post',
+        data: this.rreg[i],
+        transformRequest: function (obj) {
+          var str = []
+          for (var p in obj) {
+            str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
+          }
+          return str.join('&')
+        }
+      }).then(res => {
+        console.log(res)
+      }).catch(err => {
+        console.log(err)
+      })
+      }
+      this.send()
+      this.send2()
+    },
   },
   created() {
-    this.send()
-    this.send2()
+    this.send3()
   }
 }
 </script>
