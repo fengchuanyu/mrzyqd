@@ -127,7 +127,7 @@ export default [
         name: 'directive_page',
         meta: {
           icon: 'ios-navigate',
-          title: '文章详情'
+          title: '文章列表'
         },
         component: () =>
           import('@/view/directive/directive.vue')

@@ -249,19 +249,31 @@ export default {
         this.rreg=this.reg;
         for(var i=0;i<this.rreg.length;i++){
           // var time= new Date().getTime()
-          var d = new Date();  
-          var time=d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); 
-          var rtime=this.rreg[i].r_date
-          if(time>rtime){
-            this.rreg[i].r_tag=1
-            // console.log(1)
+          var date = new Date();
+          var year = date.getFullYear();
+          var month = date.getMonth() + 1;
+          var day = date.getDate();
+          if (month < 10) {
+              month = "0" + month;
           }
-          if(rtime>time){
+          if (day < 10) {
+              day = "0" + day;
+          }
+          var nowDate = year + "-" + month + "-" + day;
+          // console.log(nowDate)
+          var rtime=this.rreg[i].r_date
+          // var time2='2019-01-23'
+          if(nowDate>=rtime){
             this.rreg[i].r_tag=2
-            // console.log(0)
+            // console.log(typeof(time),typeof(rtime))
+            console.log(0)
+          }
+          if(rtime>nowDate){
+            this.rreg[i].r_tag=1
+            console.log(1)
           }
           if(rtime==null){
-            this.rreg[i].r_tag=null;
+            this.rreg[i].r_tag=0;
           }
           // console.log(this.rreg[i].r_tag)
         }
@@ -283,14 +295,28 @@ export default {
           return str.join('&')
         }
       }).then(res => {
-        console.log(res)
+        // console.log(res)
       }).catch(err => {
         console.log(err)
       })
       }
       this.send()
       this.send2()
-    },
+    }
+    /* info () {
+        axios({
+        url: 'http://localhost/zyy/user/rereg',
+        method: 'post',
+        data: JSON.stringify(this.rreg),
+      }).then(res => {
+        console.log(res)
+      }).catch(err => {
+        console.log(err)
+      })
+      this.send()
+      this.send2()
+    } */
+
   },
   created() {
     this.send3()
