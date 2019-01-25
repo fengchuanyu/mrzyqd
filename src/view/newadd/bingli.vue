@@ -62,7 +62,7 @@
           <li>{{value.d_time}}  {{value.d_sign}}</li>
           <li>{{value.d_content}}</li>
         </ul>
-        <i-form :model="liu" :label-width="80" method="post">
+        <i-form :model="liu" :label-width="80" method="post" class="fa">
           <Form-item label="发布留言">
             <i-input v-model="liu.add" placeholder="" name="title"></i-input>
           </Form-item>
@@ -474,5 +474,9 @@ export default {
 .but{
   position: relative;
   margin-left: 400px;
+}
+.fa{
+  position: relative;
+  margin-top: 30px;
 }
 </style>

@@ -42,7 +42,8 @@ export default {
         title: '',
         name: '',
         type: '',
-        desc: ''
+        desc: '',
+        time: ''
       },
       ruleInline: {
         title: [
@@ -69,7 +70,19 @@ export default {
   },
   methods: {
     submit () {
-      alert('添加成功')
+      var date = new Date();
+      var year = date.getFullYear();
+      var month = date.getMonth() + 1;
+      var day = date.getDate();
+      if (month < 10) {
+          month = "0" + month;
+      }
+      if (day < 10) {
+          day = "0" + day;
+      }
+      var nowDate = year + "-" + month + "-" + day;
+      this.formInline.time=nowDate
+      console.log(this.formInline)
       axios({
         url: 'http://localhost/zyy/doctor/addarticle',
         method: 'post',
@@ -82,6 +95,7 @@ export default {
           return str.join('&')
         }
       }).then(res => {
+        alert('添加成功')
         console.log(res)
       }).catch(err => {
         console.log(err)
