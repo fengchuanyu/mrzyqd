@@ -1,71 +1,98 @@
 <template>
-<div>
-        <h3 style="display:inline;">科室：</h3>
-        <Select v-model="keshiRoom" clearable style="width:200px">
-            <Option v-for="item in keShi" :value="item.value" :key="item.value">{{ item.label }}</Option>
+  <div>
+    <Form class="form1">
+      <FormItem prop="name" class="formitem2">
+          <h3 style="display:inline;">科室：</h3>
+        <Select v-model="search.oid" clearable style="width:200px" class="select">
+            <Option v-for="item in office" :value="item.oid" :key="item.oid">{{ item.o_name }}</Option>
         </Select>
+      </FormItem>
+      <FormItem prop="type" class="formitem2">
         <h3 style="display:inline;">医生：</h3>
-        <Select v-model="model8" clearable style="width:200px">
-            <Option v-for="item in doctor" :value="item.value" :key="item.value">{{ item.label }}</Option>
+        <Select v-model="search.did" clearable style="width:200px" class="select">
+            <Option v-for="item in doc" :value="item.did" :key="item.did">{{ item.doctor_name }}</Option>
         </Select>
-        <Button type="primary" icon="ios-search" style="margin-left:100px">Search</Button>
-        <Button type="primary" style="margin-left:10px">创建病例</Button>
-        
-        <Table border :columns="columns7" :data="cases"></Table>
-
-
-        <card 
+      </FormItem>
+      <FormItem class="formitem2">
+        <Button type="primary" @click="sear()">选择科室医生搜索病例</Button>
+      </FormItem>
+    </Form>
+    <Table border :columns="columns7" :data="data6"></Table>
+    <card 
       v-show="modal1"
-      title="病例详情" id="card">
+      title="病例详情页" id="card">
       <div id="div">
         <i-button type="primary" @click="goback" id="back">
             &lt;后退
         </i-button>
-        <!-- 表单 -->
-        <i-form :model="formItem" :label-width="80" method="post" action="http://localhost/zyy/Cased/updatacase">
-          
+        <i-form :model="formItem" :label-width="80" method="post">
           <Form-item label="病例名称">
-            <i-input v-model="formItem.case_name" placeholder="请输入"  name="casename"></i-input>
+            <i-input v-model="formItem.c_name" placeholder="" name="title"></i-input>
           </Form-item>
-          <Form-item label="病例时间">
-            <i-input v-model="formItem.case_time" name="casetime" :autosize="{minRows: 2,maxRows: 8}" placeholder="请输入..."></i-input>
-          </Form-item>
-
-          <h3>诊断结果：</h3>
-          <editor ref="editordia" v-model="formItem.case_diagnosis"/> 
-          <h3>病例描述：</h3>
-          <editor ref="editordes" v-model="formItem.case_describe"/> 
-          <h3>医嘱：</h3>
-          <editor ref="editoradv" v-model="formItem.case_advice"/>         
-          <input type="text" v-model="formItem.case_id" name="caid" v-show="true">
-          <Button type="primary" @click="submit()">保存更改</Button>
-        
+          <!-- <Form-item label="病症详情">
+            <i-input v-model="formItem.textarea" type="textarea" name="content" :autosize="{minRows: 2,maxRows: 8}" placeholder="请输入..."></i-input>
+          </Form-item> -->
+          <h3 style="display:inline;">病情诊断：</h3>
+          <editor ref="editor" v-model="formItem.c_diagnosis"/>
+          <h3 style="display:inline;">病情描述：</h3>
+          <editor ref="editor" v-model="formItem.c_describe"/>
+          <h3 style="display:inline;">解决方案：</h3>
+          <editor ref="editor" v-model="formItem.c_solve"/>
+          <h3 style="display:inline;">注意事项：</h3>
+          <editor ref="editor" v-model="formItem.c_attention"/>
+          <input type="button" id="btnl" @click="info" value="保存更改">
         </i-form>
     </div>
     </card>
-
+    <Card v-if="modal2" id="form">
+      <form method="post">
+        <i-input :value.sync="formItem.input" name="title" v-show="false"></i-input>
+        <i-input :value.sync="formItem.textarea" name="content" v-show="false"></i-input>
+        <div id="delete">确认删除？</div>
+        <input type="button" value="确认" id="sub" @click="yes()">
+        <input type="button" value="取消" @click="modal2=false" id="but">
+      </form>
+    </Card>
+    <Card v-if="modal3" id="card">
+      <div id="div">
+        <i-button type="primary" @click="goback2" id="back">
+            &lt;后退
+        </i-button>
+        <ul v-for="(value,index) in getliu" :key="value.index" class="liu">
+          <li>{{value.d_time}}  {{value.d_sign}}</li>
+          <li>{{value.d_content}}</li>
+        </ul>
+        <i-form :model="liu" :label-width="80" method="post">
+          <Form-item label="发布留言">
+            <i-input v-model="liu.add" placeholder="" name="title"></i-input>
+          </Form-item>
+          <Button type="primary" @click="adddis()" class="but">点击发布</Button>
+        </i-form>
     </div>
+    </Card>
+    
+    
+  </div>
 </template>
+
+
 <script>
-import axios from 'axios'
+import PasteEditor from '_c/paste-editor'
+import { getIllData } from '@/api/data'
 import Editor from '_c/editor'
-// 这里是为了 php 可以收到 post 的值
-var qs = require('qs');
+import axios from "axios"
 export default {
-components: {
+  name: 'illclass_details_page',
+  components: {
     Editor
   },
   data () {
     return {
-      formItem: {
-          
-      },
-      modal1:false,
-      
       columns7: [
         {
-          title: '病例名称',
-          key: 'case_name',
+          title: '就诊人姓名',
+          key: 'r_name',
+          width:200,
           render: (h, params) => {
             return h('div', [
               h('Icon', {
@@ -73,205 +100,304 @@ components: {
                   type: 'person'
                 }
               }),
-              h('strong', params.row.case_name)
-            ])
+              h('strong', params.row.r_name)
+            ]);
           }
-        },
+      },
         {
           title: '科室',
-          key: 'case_describe',
+          key: 'o_name',
+          align: 'center',
         },
         {
           title: '医生',
-          key: 'case_advice'
+          key: 'doctor_name',
+          align: 'center',
         },
         {
-          title: 'handle',
-          key: 'handle',
-          width: 150,
+          title: '病情描述',
+          key: 'c_describe',
+          align: 'center',
+        },
+        {
+          title: '就诊日期',
+          key: 'r_date',
+          align: 'center',
+        },
+        {
+          title: 'Action',
+          key: 'action',
+          width: 200,
           align: 'center',
           render: (h, params) => {
-            return h('div', [
-                h('Button', {
-                    props: {
-                        type: 'primary',
-                        size: 'small'
-                    },
-                    on: {
-                        click: () => {
-                            
-                        }
-                    }
-                }, '查看'),
-                h('Button', {
-                    props: {
-                        type: 'primary',
-                        size: 'small',
-                        
-                    },
-                    style: {
-                        marginRight: '5px',
-                        to: '/bingli'
-                    },
-                    on: {
-                        click: () => {
-                            this.showEdit(params.index);
-                        }
-                    }
-                }, '编辑')
-            ]);
+          return h('div', [
+            h('Button', {
+              props: {
+                type: 'primary',
+                size: 'small'
+              },
+              style: {
+                marginRight: '5px'
+              },
+              on: {
+                click: () => {
+                  this.show(params.index)
+                }
+              }
+            }, '编辑'),
+            h('Button', {
+              props: {
+                type: 'primary',
+                size: 'small'
+              },
+              style: {
+                marginRight: '5px'
+              },
+              on: {
+                click: () => {
+                  this.infor1(params.index)
+                }
+              }
+            }, '删除'),
+            h('Button', {
+              props: {
+                type: 'primary',
+                size: 'small'
+              },
+              style: {
+                marginRight: '5px'
+              },
+              on: {
+                click: () => {
+                  this.liuyan(params.index)
+                }
+              }
+            }, '留言'),
+          ]);
           }
         }
       ],
-      cases: [
-      ],
-      keShi: [
-        {
-            value: '科室1',
-            label: '科室1'
-        },
-        {
-            value: '科室2',
-            label: '科室2'
-        },
-        {
-            value: '科室3',
-            label: '科室3'
-        },
-        {
-            value: '科室4',
-            label: '科室4'
-        }
-      ],
+      liu:{
+        d_pid:'',
+        add:'',
+        time:'',
+        sign:'医生'
+      },
+      getliu:[
 
-        doctor: [
-            {
-                value: '医生1',
-                label: '医生1'
-            },
-            {
-                value: '医生2',
-                label: '医生2'
-            },
-            {
-                value: '医生3',
-                label: '医生3'
-            },
-            {
-                value: '医生4',
-                label: '医生4'
-            },
-        ],
-        model8: '',
-        keshiRoom: '',
-        case_advice:'',
-        case_describe:'',
-        case_name:'',
-        case_id:[],
-        casesall: {
+      ],
+      data6: [
 
-        },
+      ],
+      office: {
+
+      },
+      doc: {
+
+      },
+      search: {
+        oid:'',
+        did:''
+      },
+      modal1: false,
+      modal2: false,
+      modal3:false,
+      formItem: {
+        c_name:'',
+        c_diagnosis:'',
+        c_describe:'',
+        c_solve:'',
+        c_attention:'',
+        c_id:''
+      },
     }
   },
-  created () {
-    axios({
-            url: 'http://localhost/zyy/Cased/getcase',
-            method: 'get'
-        }).then(res => {
-            console.log(res.data);
-            this.casesall = res.data;
-            let arr = [];
-            for(let i =0; i < res.data.length;i ++) {
-             let cases = res.data[i];
-            arr.push({ 
-                case_name : cases.case_name,
-                case_advice : cases.case_advice,
-                case_describe : cases.case_describe,
-                case_id : cases.case_id,
-                })
-            }
-            this.cases = arr;
-        }).catch(res=>{
-            console.log('fail');
-        });
+  created() {
+    this.get();
+    this.send();
+    this.send2();
+  },
+  activated(){
+    this.get();
   },
   methods: {
-      submit() {
-        axios({
-            url: 'http://localhost/zyy/Cased/updatacase',
-            method: 'post',
-            data: this.formItem,
-            transformRequest: function (obj) {
-                var str = []
-                for (var p in obj) {
-                    str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
-                }
-                return str.join('&')
-            }
-        }).then(res => {
-            this.modal1=false;
-            alert('更改成功');
-            console.log(res)
-        }).catch(err => {
-            console.log(err)
-        })
-        // let recaseid = {
-        //     case_id : idx+1,
-        // }
-        // axios.post(`http://localhost/zyy/Cased/updatacase`,
-        //         qs.stringify(recaseid))
-        //     .then(res=>{
-        //         if(res.data){
-        //             alert('更新成功');
-        //         }
-        //         console.log('success', res.data);
-        //     }).catch(res=>{
-        //         console.log('fail');
-        //     });
-      },
-    goback() {
+    go (idx) {
+      this.formItem.c_name=this.data6[idx].c_name;
+      this.formItem.c_diagnosis=this.data6[idx].c_diagnosis;
+      this.formItem.c_describe=this.data6[idx].c_describe;
+      this.formItem.c_solve=this.data6[idx].c_solve;
+      this.formItem.c_id=this.data6[idx].c_id;
+      this.formItem.c_attention=this.data6[idx].c_attention;
+      this.modal1=true;
+    },
+    on () {
+      this.$router.push('/illclass/illclass_add_page')
+    },
+    goback (){
       this.modal1=false;
     },
-    showEdit(idx) {
-      
-        const caseid = {
-            case_id : idx+1,
+    goback2 () {
+      this.modal3=false;
+    },
+    sear () {
+      // console.log(this.search)
+      axios({
+        url: 'http://localhost/zyy/user/secase',
+        method: 'post',
+        data: this.search,
+        transformRequest: function (obj) {
+          var str = []
+          for (var p in obj) {
+            str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
+          }
+          return str.join('&')
         }
-        console.log('data'+caseid.case_id);
-        //   console.log(idx); qs.stringify(caseid)
-        console.log(qs.stringify(caseid));
-        
-      axios.post('http://localhost/zyy/Cased/get_case_id',qs.stringify(caseid))
-      .then(res => {
-          console.log(res.data);
-          let formItems = res.data;
-           this.formItem.case_name = formItems.case_name;
-           this.formItem.case_time = formItems.case_time;
-           this.formItem.case_id = formItems.caseid;
-           this.formItem.case_advice = formItems.case_advice;
-           this.formItem.case_describe = formItems.case_describe;
-           this.formItem.case_diagnosis = formItems.case_diagnosis;
-        // editor
-          this.$refs.editoradv.setHtml(this.formItem.case_advice);
-          this.$refs.editordes.setHtml(this.formItem.case_describe);
-          this.$refs.editordia.setHtml(this.formItem.case_diagnosis);
-
-          this.modal1=true;
-      }).catch(res => {
-          console.log('获取当前数据失败');
+      }).then(res => {
+        this.data6=res.data.data
+        console.log(this.data6)
+      }).catch(err => {
+        console.log(err)
       })
-    }
-  }
+    },
+    info () {
+      axios({
+        url: 'http://localhost/zyy/User/changecase',
+        method: 'post',
+        data: this.formItem,
+        transformRequest: function (obj) {
+          var str = []
+          for (var p in obj) {
+            str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
+          }
+          return str.join('&')
+        }
+      }).then(res => {
+        this.modal1=false;
+        alert('更改成功');
+        this.get();
+        console.log(res)
+      }).catch(err => {
+        console.log(err)
+      })
+    //   console.log(this.formItem)
+    },
+    infor1(idx){
+      this.formItem.c_id=this.data6[idx].c_id;
+      this.modal2=true;
+    },
+    liuyan (idx){
+      this.liu.d_pid=this.data6[idx].c_id;
+      // console.log(this.data6[idx].d_time);
+      axios({
+        url: 'http://localhost/zyy/user/sedis',
+        method: 'post',
+        data: this.liu,
+        transformRequest: function (obj) {
+          var str = []
+          for (var p in obj) {
+            str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
+          }
+          return str.join('&')
+        }
+      }).then(res => {
+        this.getliu=res.data.data
+        console.log(this.getliu)
+        this.modal3=true;
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    send () {
+      axios({
+        method: 'get',
+        url: 'http://localhost/zyy/doctor/getdoc'
+      }).then((res) => {
+        this.doc = res.data
+        console.log(this.doc)
+      })
+    },
+    send2 () {
+      axios({
+        method: 'get',
+        url: 'http://localhost/zyy/doctor/getoffice'
+      }).then((res) => {
+        this.office = res.data.data
+        console.log(this.office)
+      })
+    },
+    get(){
+      // getIllData().then(res => {
+      //   this.illdata = res.data.data;
+      // }).catch(err => {
+      //   console.log(err)
+      // })
+      axios({
+        method: 'get',
+        url: 'http://localhost/zyy/User/getcase'
+      }).then((res) => {
+        this.data6 = res.data.data;
+        console.log(this.data6)
+      })
+    },
+    yes(){
+      this.modal2=false;
+      axios({
+        url: 'http://localhost/zyy/user/delcase',
+        method: 'post',
+        data: this.formItem,
+        transformRequest: function (obj) {
+          var str = []
+          for (var p in obj) {
+            str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
+          }
+          return str.join('&')
+        }
+      }).then(res => {
+        alert('删除成功');
+        this.get();
+        console.log(res)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    adddis(){
+      this.liu.time=new Date(+new Date()+8*3600*1000).toISOString().replace(/T/g,' ').replace(/\.[\d]{3}Z/,'');
+      console.log(this.liu);
+      axios({
+        url: 'http://localhost/zyy/user/adddis',
+        method: 'post',
+        data: this.liu,
+        transformRequest: function (obj) {
+          var str = []
+          for (var p in obj) {
+            str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
+          }
+          return str.join('&')
+        }
+      }).then(res => {
+        alert('留言成功');
+        this.get();
+        console.log(res)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    show (index) {
+      this.go(index);
+    },
+  },
+  
 }
 </script>
-<style>
+
+<style lang="less">
 #card{
   text-align: center;
   width: 1000px;
-  height: 1000px;
-  position: absolute;
-  left: 260px;
-  top: 0px;
+//   height: 1600px;
+  position: relative;
+//   left: 260px;
+  top: -140px;
   z-index: 1;
 }
 #div{
@@ -280,9 +406,73 @@ components: {
 #btnl{
   height: 30px;
 }
+
 #back{
   position: absolute;
   left: 5px;
   top: 10px;
+}
+#form{
+  text-align: center;
+  width: 400px;
+  height: 300px;
+  background: #ccc;
+  position: absolute;
+  top: 100px;
+  left: 500px;
+  z-index: 1;
+}
+#sub{
+  width: 50px;
+  height: 30px;
+  position: absolute;
+  bottom: 20px;
+  left: 80px;
+}
+#but{
+  width: 50px;
+  height: 30px;
+  position: absolute;
+  bottom: 20px;
+  right: 80px;
+}
+#delete{
+  font-size: 30px;
+  position: relative;
+  top: 100px;
+}
+.form1{
+  position: relative;
+  height: 50px;
+  // float: left;
+}
+.formitem2{
+  width: 300px;
+  position: absolute;
+  // height: 30px;
+  // overflow: hidden;
+  // float: left;
+  // top: 0;
+}
+.formitem2:nth-child(2){
+  left: 300px;
+}
+.formitem2:nth-child(3){
+  left: 600px;
+}
+
+.select{
+  position: relative;
+  // z-index: 100000;
+}
+.liu{
+  list-style: none;
+  position: relative;
+  margin-left: 100px;
+  margin-top: 5px;
+}
+.but{
+  position: relative;
+  margin-left: 400px;
 }
 </style>

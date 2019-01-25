@@ -102,15 +102,6 @@ export default [
       },
       component: () =>
       import('@/view/newadd/fabu.vue'),
-    },{
-      path: '/huifu',
-      name: 'huifu',
-      meta: {
-        icon: 'ios-hammer',
-        title: '用户回复'
-      },
-      component: () => 
-        import('@/view/newadd/huifu.vue')
     }]
   },
   {

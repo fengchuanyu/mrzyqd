@@ -266,11 +266,11 @@ export default {
           if(nowDate>=rtime){
             this.rreg[i].r_tag=2
             // console.log(typeof(time),typeof(rtime))
-            console.log(0)
+            // console.log(0)
           }
           if(rtime>nowDate){
             this.rreg[i].r_tag=1
-            console.log(1)
+            // console.log(1)
           }
           if(rtime==null){
             this.rreg[i].r_tag=0;
