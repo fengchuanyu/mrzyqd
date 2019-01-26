@@ -59,7 +59,7 @@ export default {
         {
           title: '文章标题',
           key: 'article_title',
-          width:100,
+          width:800,
           render: (h, params) => {
             return h('div', [
               h('Icon', {
@@ -80,10 +80,6 @@ export default {
           title: '文章作者',
           key: 'doctor_name',
           width:100,
-        },
-        {
-          title: '文章详情',
-          key: 'article_content'
         },
         {
           title: 'Action',
