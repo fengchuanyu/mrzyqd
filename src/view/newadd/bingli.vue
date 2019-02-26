@@ -33,13 +33,13 @@
             <i-input v-model="formItem.textarea" type="textarea" name="content" :autosize="{minRows: 2,maxRows: 8}" placeholder="请输入..."></i-input>
           </Form-item> -->
           <h3 style="display:inline;">病情诊断：</h3>
-          <editor ref="editor" v-model="formItem.c_diagnosis"/>
+          <editor ref="editor1" v-model="formItem.c_diagnosis"/>
           <h3 style="display:inline;">病情描述：</h3>
-          <editor ref="editor" v-model="formItem.c_describe"/>
+          <editor ref="editor2" v-model="formItem.c_describe"/>
           <h3 style="display:inline;">解决方案：</h3>
-          <editor ref="editor" v-model="formItem.c_solve"/>
+          <editor ref="editor3" v-model="formItem.c_solve"/>
           <h3 style="display:inline;">注意事项：</h3>
-          <editor ref="editor" v-model="formItem.c_attention"/>
+          <editor ref="editor4" v-model="formItem.c_attention"/>
           <input type="button" id="btnl" @click="info" value="保存更改">
         </i-form>
     </div>
@@ -224,11 +224,16 @@ export default {
     go (idx) {
       this.formItem.c_name=this.data6[idx].c_name;
       this.formItem.c_diagnosis=this.data6[idx].c_diagnosis;
+      this.$refs.editor1.setHtml(this.formItem.c_diagnosis);
       this.formItem.c_describe=this.data6[idx].c_describe;
+      this.$refs.editor2.setHtml(this.formItem.c_describe);
       this.formItem.c_solve=this.data6[idx].c_solve;
+      this.$refs.editor3.setHtml(this.formItem.c_solve);
       this.formItem.c_id=this.data6[idx].c_id;
       this.formItem.c_attention=this.data6[idx].c_attention;
+      this.$refs.editor4.setHtml(this.formItem.c_attention);
       this.modal1=true;
+      console.log(this.formItem)
     },
     on () {
       this.$router.push('/illclass/illclass_add_page')
