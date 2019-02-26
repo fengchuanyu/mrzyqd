@@ -139,7 +139,7 @@ export default {
 }
 </script>
 <style>
-    img{
+    .form img{
         position: absolute;
         width: 200px;
         height: 300px;
